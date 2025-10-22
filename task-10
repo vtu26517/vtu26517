@@ -1,0 +1,35 @@
+# Simple Knowledge Base using dictionaries
+# Knowledge Base: Each key is a predicate with subject-object pairs
+knowledge_base = {
+ 'likes': {
+ 'Ram': 'Mango',
+ 'Bill': 'Cindy'
+ },
+ 'is_a': {
+ 'Seema': 'Girl'
+ },
+ 'color': {
+ 'Rose': 'Red'
+ },
+ 'owns': {
+'John': 'Gold'
+ }
+}
+# Query 1: Is Seema a girl?
+def is_seema_a_girl():
+ return knowledge_base['is_a'].get('Seema') == 'Girl'
+# Query 2: Does Bill like someone?
+def who_does_bill_like():
+ return knowledge_base['likes'].get('Bill', None)
+# Query 3: What color is Rose?
+def color_of_rose():
+ return knowledge_base['color'].get('Rose', None)
+# Run the queries
+print("Query: Is Seema a girl?")
+print("Answer:", "Yes" if is_seema_a_girl() else "No")
+print("\nQuery: Does Bill like someone?")
+bill_likes = who_does_bill_like()
+print("Answer:", f"Yes, Bill likes {bill_likes}" if bill_likes else "No")
+print("\nQuery: What color is Rose?")
+rose_color = color_of_rose()
+print("Answer:", f"Rose is {rose_color}" if rose_color else "Unknown")
