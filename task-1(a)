@@ -1,0 +1,66 @@
+// Graphviz DOT Code for Voice-Based Mail System Architecture
+digraph VoiceMailSystem {
+    // Graph and Node settings
+    rankdir=LR; // Left to Right layout
+    node [shape=box, style="filled", fillcolor="#E0F7FA"];
+    
+    // Define the main components/stages
+    
+    // 1. User Input
+    subgraph cluster_0 {
+        label = "Stage 1: Voice Input & Recognition";
+        color = "#00796B";
+        fontcolor = "#004D40";
+        User [shape=Mrecord, label="{User | Visually Impaired Individual}"];
+        Mic [label="Microphone / Input Device"];
+        ASR_Engine [label="ASR (Automatic Speech Recognition) Engine\n(Speech-to-Text)"];
+    }
+    
+    // 2. Processing & Logic
+    subgraph cluster_1 {
+        label = "Stage 2: Core Processing & Mail Logic";
+        color = "#FFB300";
+        fontcolor = "#E65100";
+        IVR_Logic [label="IVR (Interactive Voice Response) Engine\n(Command Interpreter)"];
+        Mail_Manager [label="Mail Management Module\n(SMTP/IMAP Protocol Handler)"];
+        Database [shape=cylinder, label="Database (User Credentials, Settings)"];
+    }
+    
+    // 3. External & Output
+    subgraph cluster_2 {
+        label = "Stage 3: External Mail & Audio Output";
+        color = "#303F9F";
+        fontcolor = "#1A237E";
+        Email_Server [shape=tab, label="External Mail Server\n(Gmail/Outlook)"];
+        TTS_Engine [label="TTS (Text-to-Speech) Engine"];
+        Speaker [label="Speaker / Audio Output"];
+    }
+    
+    // Define the data flow (Edges)
+    
+    // Input Flow
+    User -> Mic [label="Speech/Command"];
+    Mic -> ASR_Engine [label="Acoustic Signal"];
+    ASR_Engine -> IVR_Logic [label="Text Command/Dictation"];
+    
+    // Core Processing Flow
+    IVR_Logic -> Database [label="Authentication Check"];
+    Database -> IVR_Logic [label="Credentials Verified"];
+    IVR_Logic -> Mail_Manager [label="Action Request\n(e.g., Compose, Read, Delete)"];
+    
+    // External Mail Flow (Send/Receive)
+    Mail_Manager -> Email_Server [label="SMTP (Send) / IMAP (Receive)"];
+    Email_Server -> Mail_Manager [label="Incoming Mail Data / Confirmation"];
+    
+    // Output Flow (Feedback)
+    Mail_Manager -> TTS_Engine [label="Text to be Read\n(Mail Body, System Prompt, Error)"];
+    IVR_Logic -> TTS_Engine [label="Prompt/Feedback Text"];
+    TTS_Engine -> Speaker [label="Audio Feedback / Message"];
+    Speaker -> User [label="Audible Information"];
+    
+    // Optional Feedback Loop
+    // TTS_Engine -> User [style=dashed, label="Error/Confirmation"];
+    
+    // Define the flow for initial login check
+    ASR_Engine -> Database [label="Voice Enrollment/Verification", style=dotted, dir=back, constraint=false];
+}
