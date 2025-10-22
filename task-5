@@ -1,0 +1,70 @@
+Program: 
+import random
+import numpy as np
+# Distance matrix (simulated travel time between delivery points)
+distance_matrix = [
+ [0, 2, 2, 5, 7],
+ [2, 0, 4, 8, 2],
+ [2, 4, 0, 1, 3],
+ [5, 8, 1, 0, 2],
+ [7, 2, 3, 2, 0]
+]
+num_ants = 5
+num_cities = len(distance_matrix)
+num_iterations = 100
+evaporation_rate = 0.5
+alpha = 1 # pheromone importance
+beta = 2 # distance importance
+# Initialize pheromone levels
+pheromone = [[1 for _ in range(num_cities)] for _ in range(num_cities)]
+def calculate_probability(from_city, to_city, visited):
+ if to_city in visited:
+ return 0
+ pher = pheromone[from_city][to_city] ** alpha
+ heuristic = (1 / distance_matrix[from_city][to_city]) ** beta
+ return pher * heuristic
+def select_next_city(current_city, visited):
+ probabilities = [calculate_probability(current_city, i, visited) for i in range(num_cities)]
+ total = sum(probabilities)
+ if total == 0:
+ return random.choice([i for i in range(num_cities) if i not in visited])
+ probabilities = [p / total for p in probabilities]
+ return np.random.choice(range(num_cities), p=probabilities)
+def build_solution():
+ solutions = []
+ for _ in range(num_ants):
+ visited = []
+ current_city = random.randint(0, num_cities - 1)
+ visited.append(current_city)
+ while len(visited) < num_cities:
+ next_city = select_next_city(current_city, visited)
+ visited.append(next_city)
+ current_city = next_city
+ solutions.append(visited)
+return solutions
+def route_distance(route):
+ return sum(distance_matrix[route[i]][route[i + 1]] for i in range(len(route) - 1)) + 
+distance_matrix[route[-1]][route[0]]
+def update_pheromones(solutions):
+ global pheromone
+ for i in range(num_cities):
+ for j in range(num_cities):
+ pheromone[i][j] *= (1 - evaporation_rate)
+ for route in solutions:
+ dist = route_distance(route)
+ for i in range(num_cities):
+ from_city = route[i]
+ to_city = route[(i + 1) % num_cities]
+ pheromone[from_city][to_city] += 1.0 / dist
+best_route = None
+best_distance = float('inf')
+for _ in range(num_iterations):
+ solutions = build_solution()
+ update_pheromones(solutions)
+ for route in solutions:
+ dist = route_distance(route)
+ if dist < best_distance:
+ best_distance = dist
+ best_route = route
+print("Best route found:", best_route)
+print("Total trip duration:", best_distance)
